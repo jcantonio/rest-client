@@ -2,10 +2,20 @@ package rest
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
+)
+
+const (
+	MethodGet              = "GET"
+	MethodPost             = "POST"
+	MethodPut              = "PUT"
+	MethodDelete           = "DELETE"
+	MethodPatch            = "PATCH"
+	AuthorizationTypeToken = "token"
 )
 
 /*
@@ -16,10 +26,16 @@ type Call struct {
 	Method        string
 	Params        map[string]string
 	Headers       map[string]string
-	Authorization interface{}
+	Authorization Authorization
 	ContentType   string
 	Body          string
 }
+
+type Authorization struct {
+	Type    string
+	Content interface{}
+}
+type TokenContent string
 
 /*
 Response is a simplified response for REST calls
@@ -53,10 +69,20 @@ func Do(call Call) (*Response, error) {
 	for k, v := range call.Headers {
 		r.Header.Set(k, v)
 	}
+	switch call.Authorization.Type {
+	case AuthorizationTypeToken:
+		r.Header.Set("Authorization", fmt.Sprintf("Bearer %v", call.Authorization.Content))
+	}
+
+	type Authorization struct {
+		Type    string
+		Content interface{}
+	}
+	type TokenContent string
 
 	client := &http.Client{}
 
-	if call.Method != "GET" && call.Method != "DELETE" {
+	if call.Method != MethodGet && call.Method != MethodDelete {
 		if call.ContentType != "" {
 			r.Header.Set("Content-Type", call.ContentType)
 		}
