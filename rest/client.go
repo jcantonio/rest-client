@@ -90,10 +90,12 @@ func Do(call Call) (*Response, error) {
 	}
 
 	resp, err := client.Do(r)
+	response := Response{}
 
-	response := Response{
-		StatusCode: resp.StatusCode,
+	if err != nil {
+		return nil, err
 	}
+	response.StatusCode = resp.StatusCode
 
 	if resp.StatusCode != 200 {
 		data, _ := ioutil.ReadAll(resp.Body)
