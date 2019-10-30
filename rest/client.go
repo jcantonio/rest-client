@@ -10,12 +10,13 @@ import (
 )
 
 const (
-	MethodGet              = "GET"
-	MethodPost             = "POST"
-	MethodPut              = "PUT"
-	MethodDelete           = "DELETE"
-	MethodPatch            = "PATCH"
-	AuthorizationTypeToken = "token"
+	MethodGet                = "GET"
+	MethodPost               = "POST"
+	MethodPut                = "PUT"
+	MethodDelete             = "DELETE"
+	MethodPatch              = "PATCH"
+	AuthorizationTypeToken   = "bearer-token"
+	AuthorizationTypeXApiKey = "x-api-key"
 )
 
 /*
@@ -45,6 +46,15 @@ type Response struct {
 	Body       []byte
 }
 
+func NewCall(url, method string) Call {
+	return Call{
+		URL:     url,
+		Method:  method,
+		Headers: map[string]string{},
+		Params:  map[string]string{},
+	}
+}
+
 /*
 Do executes a REST
 */
@@ -71,7 +81,9 @@ func Do(call Call) (*Response, error) {
 	}
 	switch call.Authorization.Type {
 	case AuthorizationTypeToken:
-		r.Header.Set("Authorization", fmt.Sprintf("Bearer %v", call.Authorization.Content))
+		r.Header.Set("Authorization", fmt.Sprintf("%v", call.Authorization.Content))
+	case AuthorizationTypeXApiKey:
+		r.Header.Set("x-api-key", fmt.Sprintf("%v", call.Authorization.Content))
 	}
 
 	type Authorization struct {
