@@ -109,7 +109,7 @@ func Do(call Call) (*Response, error) {
 	}
 	response.StatusCode = resp.StatusCode
 
-	data, _ := ioutil.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(resp.Body)
 	response.Body = data
 
 	return &response, err
