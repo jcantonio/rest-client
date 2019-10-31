@@ -109,10 +109,8 @@ func Do(call Call) (*Response, error) {
 	}
 	response.StatusCode = resp.StatusCode
 
-	if resp.StatusCode != 200 {
-		data, _ := ioutil.ReadAll(resp.Body)
-		response.Body = data
-	}
+	data, _ := ioutil.ReadAll(resp.Body)
+	response.Body = data
 
 	return &response, err
 }
