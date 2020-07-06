@@ -62,7 +62,7 @@ func Do(call Call) (*Response, error) {
 	var url bytes.Buffer
 	url.WriteString(call.URL)
 
-	if call.Params != nil {
+	if call.Params != nil && len(call.Params) > 0 {
 		url.WriteByte('?')
 		for k, v := range call.Params {
 			url.WriteString(k)
